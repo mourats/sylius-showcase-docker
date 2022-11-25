@@ -10,7 +10,6 @@ ARG MYSQL_PASSWORD=password
 ARG DATABASE_URL=mysql://$MYSQL_USER:$MYSQL_PASSWORD@127.0.0.1:3306/$MYSQL_DB
 ENV DATABASE_URL=$DATABASE_URL
 ENV APP_ENV=dev
-ENV APP_DEBUG=0
 
 # Install basic tools
 RUN apt-get update && apt-get install -y \
@@ -87,10 +86,13 @@ RUN npm install -g yarn && npm cache clean --force \
     && mysql -u root -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB}.* TO '${MYSQL_USER}'@'localhost';" \
     && mysql -u root -e "FLUSH PRIVILEGES;" \
     && composer create-project sylius/sylius-standard . \
-    && composer install \
     && bin/console sylius:install -n \
     && yarn install  \
     && yarn build
+
+RUN echo "web_profiler:\n \
+  toolbar: false\n \
+  intercept_redirects: false\n" > /app/config/packages/dev/web_profiler.yaml
 
 EXPOSE 80
 

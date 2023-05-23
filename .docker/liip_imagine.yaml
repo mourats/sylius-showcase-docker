@@ -1,0 +1,10 @@
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: "/app/public"
+                cache_prefix: "media/cache"
+    loaders:
+        default:
+          filesystem:
+            data_root: "/app/public/media"

@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 ARG MARIADB_MYSQL_SOCKET_DIRECTORY='/var/run/mysqld'
 ENV LC_ALL=C.UTF-8
 
@@ -26,7 +26,7 @@ RUN groupadd -r mysql && useradd -r -g mysql mysql
 # Append NODE, NGINX and PHP repositories
 # and install required PHP extensions
 RUN add-apt-repository ppa:ondrej/php \
-    && add-apt-repository ppa:ondrej/nginx \
+    && add-apt-repository ppa:nginx/stable \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update && apt-get install -y \
     nodejs \
@@ -93,6 +93,9 @@ RUN npm install -g yarn && npm cache clean --force \
 RUN echo "web_profiler:\n \
   toolbar: false\n \
   intercept_redirects: false\n" > /app/config/packages/dev/web_profiler.yaml
+
+COPY .docker/liip_imagine.yaml        /app/config/packages/liip_imagine.yaml
+RUN chown -R 33:33 /app/var 
 
 EXPOSE 80
 
